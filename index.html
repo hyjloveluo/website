@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文件URL跳转器</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 600px;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #1a2a6c;
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #444;
+        }
+        
+        .input-group {
+            display: flex;
+            margin-bottom: 5px;
+        }
+        
+        .prefix {
+            background-color: #e9ecef;
+            border: 1px solid #ced4da;
+            border-right: none;
+            border-radius: 5px 0 0 5px;
+            color: #495057;
+            padding: 12px 15px;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+        
+        input[type="text"] {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid #ced4da;
+            border-radius: 0 5px 5px 0;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="text"]:focus {
+            border-color: #1a2a6c;
+            box-shadow: 0 0 0 3px rgba(26, 42, 108, 0.2);
+        }
+        
+        .example {
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+        
+        .btn {
+            background: linear-gradient(to right, #1a2a6c, #b21f1f);
+            color: white;
+            border: none;
+            padding: 14px 30px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 20px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(to right, #24378a, #c72d2d);
+        }
+        
+        .btn:active {
+            transform: translateY(1px);
+        }
+        
+        .result {
+            margin-top: 30px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            display: none;
+        }
+        
+        .error {
+            color: #dc3545;
+            margin-top: 10px;
+            font-weight: 500;
+            display: none;
+        }
+        
+        .compatibility {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #eaeaea;
+        }
+        
+        .compatibility h3 {
+            margin-bottom: 15px;
+            color: #1a2a6c;
+        }
+        
+        .browser-icons {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 15px;
+        }
+        
+        .browser-icon {
+            text-align: center;
+            font-size: 3rem;
+        }
+        
+        .browser-icon span {
+            font-size: 0.9rem;
+            display: block;
+            margin-top: 5px;
+        }
+        
+        footer {
+            margin-top: 30px;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .input-group {
+                flex-direction: column;
+            }
+            
+            .prefix {
+                border-radius: 5px 5px 0 0;
+                border-right: 1px solid #ced4da;
+                border-bottom: none;
+            }
+            
+            input[type="text"] {
+                border-radius: 0 0 5px 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>文件URL跳转器</h1>
+        <p class="subtitle">输入文件名，跳转到指定文件URL地址</p>
+        
+        <div class="form-group">
+            <label for="filename">文件名：</label>
+            <div class="input-group">
+                <div class="prefix">http://aliyun.com.hyj120309.top/</div>
+                <input type="text" id="filename" placeholder="例如：bg.jpg" autocomplete="off">
+            </div>
+            <p class="example">示例：bg.jpg, images/photo.png, docs/report.pdf</p>
+            <div id="error" class="error">请输入有效的文件名</div>
+        </div>
+        
+        <button id="redirectBtn" class="btn">立即跳转</button>
+        
+        <div id="result" class="result">
+            即将跳转到: <span id="generatedUrl"></span>
+        </div>
+        
+        <div class="compatibility">
+            <h3>兼容性说明</h3>
+            <p>此工具使用纯HTML和JavaScript实现，兼容以下浏览器：</p>
+            <div class="browser-icons">
+                <div class="browser-icon">🌐<span>IE9+</span></div>
+                <div class="browser-icon">🔥<span>Firefox</span></div>
+                <div class="browser-icon">🧭<span>Chrome</span></div>
+                <div class="browser-icon">⛵<span>Safari</span></div>
+                <div class="browser-icon">🦊<span>Opera</span></div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>© 2023 URL跳转器 | 兼容性优先设计</p>
+        </footer>
+    </div>
+
+    <script>
+        // 兼容性强的JavaScript实现（ES5）
+        document.addEventListener('DOMContentLoaded', function() {
+            var filenameInput = document.getElementById('filename');
+            var redirectBtn = document.getElementById('redirectBtn');
+            var errorElement = document.getElementById('error');
+            var resultElement = document.getElementById('result');
+            var generatedUrlElement = document.getElementById('generatedUrl');
+            
+            // 跳转按钮点击事件
+            redirectBtn.addEventListener('click', function() {
+                // 获取输入的文件名并去除首尾空格
+                var filename = filenameInput.value.trim();
+                
+                // 验证输入是否为空
+                if (!filename) {
+                    showError('请输入文件名');
+                    return;
+                }
+                
+                // 构建完整的URL
+                var baseUrl = 'http://aliyun.com.hyj120309.top/';
+                var fullUrl = baseUrl + filename;
+                
+                // 显示结果
+                generatedUrlElement.textContent = fullUrl;
+                resultElement.style.display = 'block';
+                errorElement.style.display = 'none';
+                
+                // 延迟跳转以便用户看到URL
+                setTimeout(function() {
+                    window.location.href = fullUrl;
+                }, 800);
+            });
+            
+            // 按Enter键也可以触发跳转
+            filenameInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    redirectBtn.click();
+                }
+            });
+            
+            // 输入时隐藏错误信息
+            filenameInput.addEventListener('input', function() {
+                if (filenameInput.value.trim()) {
+                    errorElement.style.display = 'none';
+                }
+            });
+            
+            // 显示错误信息函数
+            function showError(message) {
+                errorElement.textContent = message;
+                errorElement.style.display = 'block';
+                resultElement.style.display = 'none';
+                
+                // 添加错误动画效果
+                filenameInput.style.borderColor = '#dc3545';
+                setTimeout(function() {
+                    filenameInput.style.borderColor = '#ced4da';
+                }, 1000);
+            }
+        });
+    </script>
+</body>
+</html>
