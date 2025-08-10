@@ -4,7 +4,7 @@
 |-- index.html
 |-- tree.bat
 |-- tree.txt
-|-- ×¨¼­\
+|-- ×¨¼­
 |   |-- LOST IN TIANYI\
 |   |   |-- 01.8102.flac
 |   |   |-- 02.À²ßÕßÕ.flac
