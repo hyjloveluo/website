@@ -1,13 +1,10 @@
+.\
 |-- bg.jpg
 |-- CNAME
 |-- index.html
 |-- tree.bat
 |-- tree.txt
-<<<<<<< HEAD
 |-- 专辑\
-=======
-|-- 专辑
->>>>>>> c079142ab484115021eb1e2d55093306dd5f8cb2
 |   |-- LOST IN TIANYI\
 |   |   |-- 01.8102.flac
 |   |   |-- 02.啦哒哒.flac
