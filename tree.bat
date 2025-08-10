@@ -1,0 +1,2 @@
+@echo off
+powershell -Command "function Format-Tree($path) { Get-ChildItem $path -ErrorAction SilentlyContinue | Sort-Object Name | ForEach-Object { $line = '|-- ' + $_.Name; if ($_.PSIsContainer) { $line += '\' }; $line; if ($_.PSIsContainer) { Format-Tree $_.FullName | ForEach-Object { '|   ' + $_ } } } }; '.\'; Format-Tree ." > tree.txt
