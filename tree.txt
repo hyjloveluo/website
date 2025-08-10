@@ -1,25 +1,24 @@
-.\
 |-- bg.jpg
 |-- CNAME
 |-- index.html
 |-- tree.bat
 |-- tree.txt
-|-- ר��
+|-- 专辑
 |   |-- LOST IN TIANYI\
 |   |   |-- 01.8102.flac
-|   |   |-- 02.������.flac
-|   |   |-- 03.��� .flac
-|   |   |-- 04.�������.flac
-|   |   |-- 05.˹�ҿ�˹���յ�.flac
-|   |   |-- 06.�ʼǱ��ϵĻ�������.flac
-|   |   |-- 07.˹��.flac
-|   |   |-- 08.��Ĥ������ΤϤ��ޤ�.flac
+|   |   |-- 02.啦哒哒.flac
+|   |   |-- 03.最大化 .flac
+|   |   |-- 04.风兮风兮.flac
+|   |   |-- 05.斯芬克斯的谜底.flac
+|   |   |-- 06.笔记本上的幻想世界.flac
+|   |   |-- 07.斯人.flac
+|   |   |-- 08.嘘つきは恋のはじまり.flac
 |   |   |-- 09.Monologue.flac
 |   |-- sing sing sing\
-|   |   |-- 01 ���򻨵�����.wav
+|   |   |-- 01 茉莉花的音符.wav
 |   |   |-- 02 Feel Your Dream.wav
-|   |   |-- 03 �LΞ��.wav
-|   |   |-- 04 ������.wav
-|   |   |-- 05 ���z.wav
-|   |   |-- 06 ��Ȼ���Z.wav
-|   |   |-- 07 ǧ��ʳ�V�.wav
+|   |   |-- 03 風螢月.wav
+|   |   |-- 04 三月雨.wav
+|   |   |-- 05 不輟.wav
+|   |   |-- 06 自然物語.wav
+|   |   |-- 07 千年食譜頌.wav
