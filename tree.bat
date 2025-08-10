@@ -1,2 +1,2 @@
 @echo off
-powershell -Command "function Format-Tree($path) { Get-ChildItem $path -ErrorAction SilentlyContinue | Sort-Object Name | ForEach-Object { $line = '|-- ' + $_.Name; if ($_.PSIsContainer) { $line += '\' }; $line; if ($_.PSIsContainer) { Format-Tree $_.FullName | ForEach-Object { '|   ' + $_ } } } }; '.\'; Format-Tree ." > tree.txt
+powershell -Command "[Console]::OutputEncoding = [System.Text.Encoding]::UTF8; function Format-Tree($path) { Get-ChildItem $path -ErrorAction SilentlyContinue | Sort-Object Name | ForEach-Object { $line = '|-- ' + $_.Name; if ($_.PSIsContainer) { $line += '\'; $line; Format-Tree $_.FullName | ForEach-Object { '|   ' + $_ } } else { $line } } }; '.\'; Format-Tree ." | Out-File tree.txt -Encoding UTF8
