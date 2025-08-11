@@ -40,6 +40,7 @@
             text-align: right;
             word-break: break-all;
             padding-right: 5px;
+            min-height: 30px;
         }
         .current-operand {
             color: #fff;
@@ -119,18 +120,28 @@
             padding: 10px;
             font-size: 0.9rem;
             background: rgba(0,0,0,0.3);
+            border-bottom: 1px solid #33334d;
+        }
+        .error-message {
+            color: #ff6b6b;
+            text-align: center;
+            padding: 10px;
+            font-size: 0.9rem;
+            background: rgba(255, 0, 0, 0.1);
+            display: none;
         }
     </style>
 </head>
 <body>
     <div class="calculator">
         <div class="title">科学计算器</div>
-        <div class="instructions">支持自定义次方根（3√, 4√, n√）</div>
+        <div class="instructions">支持连续计算与自定义次方根</div>
         <div class="display-container">
             <div class="previous-operand" id="previous-operand"></div>
             <div class="current-operand" id="current-operand">0</div>
             <div class="root-indicator" id="root-indicator"></div>
         </div>
+        <div class="error-message" id="error-message"></div>
         <div class="buttons">
             <button class="function" onclick="clearDisplay()">C</button>
             <button class="function" onclick="backspace()">⌫</button>
@@ -138,32 +149,28 @@
             <button class="function" onclick="appendOperation('^')">x^y</button>
             <button class="function" onclick="appendOperation('(')">(</button>
             
-            <button class="root" onclick="setRoot(3)">3√</button>
-            <button class="root" onclick="setRoot(4)">4√</button>
-            <button class="root" onclick="setRoot(5)">5√</button>
-            <button class="root" onclick="setRoot(6)">6√</button>
-            <button class="function" onclick="appendOperation(')')">)</button>
-            
+            <button class="root" onclick="setRootMode()">n√</button>
             <button class="function" onclick="appendPi()">π</button>
             <button class="operator" onclick="appendOperation('/')">÷</button>
             <button onclick="appendNumber('7')">7</button>
             <button onclick="appendNumber('8')">8</button>
-            <button onclick="appendNumber('9')">9</button>
             
+            <button onclick="appendNumber('9')">9</button>
             <button class="operator" onclick="appendOperation('*')">×</button>
             <button onclick="appendNumber('4')">4</button>
             <button onclick="appendNumber('5')">5</button>
-            <button onclick="appendNumber('6')">6</button>
             
+            <button onclick="appendNumber('6')">6</button>
             <button class="operator" onclick="appendOperation('-')">−</button>
             <button onclick="appendNumber('1')">1</button>
             <button onclick="appendNumber('2')">2</button>
-            <button onclick="appendNumber('3')">3</button>
             
+            <button onclick="appendNumber('3')">3</button>
             <button class="operator" onclick="appendOperation('+')">+</button>
             <button class="double" onclick="appendNumber('0')">0</button>
             <button onclick="appendDecimal()">.</button>
             <button class="equals" onclick="calculate()">=</button>
+            <button class="function" onclick="appendOperation(')')">)</button>
         </div>
     </div>
 
@@ -171,26 +178,37 @@
         const currentOperandElement = document.getElementById('current-operand');
         const previousOperandElement = document.getElementById('previous-operand');
         const rootIndicatorElement = document.getElementById('root-indicator');
+        const errorMessageElement = document.getElementById('error-message');
         
         let currentOperand = '0';
         let previousOperand = '';
-        let rootExponent = null;
+        let lastResult = null;
+        let rootMode = false;
+        let operationInProgress = false;
         
         function updateDisplay() {
             currentOperandElement.textContent = currentOperand;
             previousOperandElement.textContent = previousOperand;
             
-            // 更新次方根指示器
-            if (rootExponent !== null) {
-                rootIndicatorElement.textContent = `${rootExponent}次方根`;
+            if (rootMode) {
+                rootIndicatorElement.textContent = `n√模式（输入根指数）`;
             } else {
                 rootIndicatorElement.textContent = '';
             }
         }
         
+        function showError(message) {
+            errorMessageElement.textContent = message;
+            errorMessageElement.style.display = 'block';
+            setTimeout(() => {
+                errorMessageElement.style.display = 'none';
+            }, 3000);
+        }
+        
         function appendNumber(number) {
-            if (currentOperand === '0' || currentOperand === '错误') {
+            if (currentOperand === '0' || currentOperand === '错误' || operationInProgress) {
                 currentOperand = number;
+                operationInProgress = false;
             } else {
                 currentOperand += number;
             }
@@ -198,8 +216,9 @@
         }
         
         function appendDecimal() {
-            if (currentOperand === '错误') {
+            if (currentOperand === '错误' || operationInProgress) {
                 currentOperand = '0.';
+                operationInProgress = false;
             } else if (!currentOperand.includes('.')) {
                 currentOperand += '.';
             }
@@ -209,13 +228,16 @@
         function clearDisplay() {
             currentOperand = '0';
             previousOperand = '';
-            rootExponent = null;
+            lastResult = null;
+            rootMode = false;
+            operationInProgress = false;
             updateDisplay();
         }
         
         function backspace() {
-            if (currentOperand === '错误') {
+            if (currentOperand === '错误' || operationInProgress) {
                 currentOperand = '0';
+                operationInProgress = false;
             } else if (currentOperand.length === 1) {
                 currentOperand = '0';
             } else {
@@ -229,25 +251,27 @@
                 currentOperand = '0';
             }
             
-            // 重置次方根状态
-            rootExponent = null;
+            // 重置次方根模式
+            rootMode = false;
             
-            if (op === '^') {
-                previousOperand = currentOperand + '^';
-                currentOperand = '0';
-            } else if (op === 'Math.PI') {
-                currentOperand = Math.PI.toString();
+            // 如果上一个操作是等号，则使用结果继续计算
+            if (lastResult !== null) {
+                previousOperand = lastResult + op;
+                lastResult = null;
+            } else if (previousOperand.endsWith('=')) {
+                previousOperand = currentOperand + op;
             } else {
                 previousOperand += currentOperand + op;
-                currentOperand = '0';
             }
             
+            operationInProgress = true;
             updateDisplay();
         }
         
         function appendPi() {
-            if (currentOperand === '0' || currentOperand === '错误') {
+            if (currentOperand === '0' || currentOperand === '错误' || operationInProgress) {
                 currentOperand = Math.PI.toString();
+                operationInProgress = false;
             } else {
                 currentOperand += Math.PI.toString();
             }
@@ -262,11 +286,13 @@
             try {
                 const num = parseFloat(currentOperand);
                 if (num < 0) {
+                    showError("错误：不能对负数求平方根");
                     currentOperand = '错误';
                 } else {
                     const result = Math.sqrt(num);
                     previousOperand = `√(${num})`;
                     currentOperand = result.toString();
+                    lastResult = currentOperand;
                 }
             } catch (e) {
                 currentOperand = '错误';
@@ -274,52 +300,78 @@
             updateDisplay();
         }
         
-        // 设置自定义次方根
-        function setRoot(exponent) {
+        // 设置自定义次方根模式
+        function setRootMode() {
             if (currentOperand === '错误') {
                 currentOperand = '0';
             }
             
-            rootExponent = exponent;
-            previousOperand = `${exponent}√(${currentOperand})`;
-            calculateRoot();
+            if (currentOperand === '0') {
+                showError("请先输入被开方数");
+                return;
+            }
+            
+            rootMode = true;
+            previousOperand = `${currentOperand} n√ `;
+            currentOperand = ''; // 清空当前输入，准备接收根指数
+            updateDisplay();
         }
         
         // 计算自定义次方根
         function calculateRoot() {
-            if (rootExponent === null || currentOperand === '错误') return;
+            if (!rootMode) return;
             
             try {
-                const num = parseFloat(currentOperand);
-                const exponent = rootExponent;
+                const base = parseFloat(previousOperand.split(' ')[0]);
+                const exponent = parseFloat(currentOperand);
                 
-                if (num < 0 && exponent % 2 === 0) {
-                    currentOperand = '错误'; // 负数的偶次方根是复数
+                if (exponent === 0) {
+                    showError("错误：根指数不能为零");
+                    currentOperand = '错误';
+                    return;
+                }
+                
+                if (base < 0 && exponent % 2 === 0) {
+                    showError("错误：负数的偶次方根是复数");
+                    currentOperand = '错误';
+                    return;
+                }
+                
+                // 计算 base 的 1/exponent 次方
+                const result = Math.pow(base, 1/exponent);
+                
+                if (isNaN(result) || !isFinite(result)) {
+                    showError("计算错误：无效的输入");
+                    currentOperand = '错误';
                 } else {
-                    // 计算 num 的 exponent 次方根
-                    const result = Math.pow(num, 1/exponent);
-                    
-                    if (isNaN(result) || !isFinite(result)) {
-                        currentOperand = '错误';
-                    } else {
-                        currentOperand = result.toString();
-                    }
+                    previousOperand += currentOperand + ' =';
+                    currentOperand = result.toString();
+                    lastResult = currentOperand;
                 }
             } catch (e) {
                 currentOperand = '错误';
             }
             
+            rootMode = false;
             updateDisplay();
         }
         
         function calculate() {
-            // 如果有次方根待计算，先计算
-            if (rootExponent !== null) {
+            // 处理自定义次方根
+            if (rootMode) {
                 calculateRoot();
                 return;
             }
             
             let expression = previousOperand + currentOperand;
+            
+            // 如果没有操作符，直接显示当前值
+            if (expression === '' || expression.endsWith('=')) {
+                previousOperand = currentOperand + '=';
+                lastResult = currentOperand;
+                updateDisplay();
+                return;
+            }
             
             try {
                 // 替换运算符
@@ -332,16 +384,20 @@
                 const result = safeEval(expression);
                 
                 if (isNaN(result) || !isFinite(result)) {
+                    showError("计算错误：无效的表达式");
                     currentOperand = '错误';
                 } else {
                     // 最多保留10位小数
                     currentOperand = parseFloat(result.toFixed(10)).toString();
                     previousOperand = expression + '=';
+                    lastResult = currentOperand;
                 }
             } catch (e) {
+                showError("计算错误：" + e.message);
                 currentOperand = '错误';
             }
             
+            operationInProgress = true;
             updateDisplay();
         }
         
