@@ -3,297 +3,245 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>文件URL跳转器</title>
+    <title>URL页面内跳转器</title>
     <style>
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
-        
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
             color: #333;
-            line-height: 1.6;
             min-height: 100vh;
             padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            line-height: 1.6;
         }
-        
         .container {
-            background-color: rgba(255, 255, 255, 0.95);
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            width: 100%;
-            max-width: 600px;
-            padding: 40px;
+            max-width: 1000px;
+            margin: 40px auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        header {
+            background: linear-gradient(to right, #4776E6, #8E54E9);
+            color: white;
+            padding: 25px 30px;
             text-align: center;
         }
-        
         h1 {
-            color: #1a2a6c;
-            margin-bottom: 10px;
-            font-size: 2.5rem;
-        }
-        
-        .subtitle {
-            color: #666;
-            margin-bottom: 30px;
-            font-size: 1.1rem;
-        }
-        
-        .form-group {
-            margin-bottom: 25px;
-            text-align: left;
-        }
-        
-        label {
-            display: block;
+            font-size: 2.2rem;
             margin-bottom: 8px;
-            font-weight: 600;
-            color: #444;
+            letter-spacing: 1px;
         }
-        
+        .subtitle {
+            opacity: 0.85;
+            font-weight: 300;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .input-section {
+            padding: 30px;
+            border-bottom: 1px solid #eee;
+        }
         .input-group {
             display: flex;
-            margin-bottom: 5px;
+            max-width: 800px;
+            margin: 0 auto;
         }
-        
         .prefix {
-            background-color: #e9ecef;
-            border: 1px solid #ced4da;
+            background: #f1f3f9;
+            padding: 15px 20px;
+            border: 1px solid #ddd;
             border-right: none;
-            border-radius: 5px 0 0 5px;
-            color: #495057;
-            padding: 12px 15px;
-            font-size: 1rem;
+            border-radius: 8px 0 0 8px;
             font-weight: 500;
+            color: #555;
         }
-        
-        input[type="text"] {
+        #filename {
             flex: 1;
-            padding: 12px 15px;
-            border: 1px solid #ced4da;
-            border-radius: 0 5px 5px 0;
-            font-size: 1rem;
+            padding: 15px;
+            border: 1px solid #ddd;
+            font-size: 16px;
             outline: none;
-            transition: border-color 0.3s;
+            transition: all 0.3s;
         }
-        
-        input[type="text"]:focus {
-            border-color: #1a2a6c;
-            box-shadow: 0 0 0 3px rgba(26, 42, 108, 0.2);
+        #filename:focus {
+            border-color: #4776E6;
+            box-shadow: 0 0 0 3px rgba(71, 118, 230, 0.2);
         }
-        
-        .example {
-            font-size: 0.9rem;
-            color: #6c757d;
-            margin-top: 5px;
-        }
-        
-        .btn {
-            background: linear-gradient(to right, #1a2a6c, #b21f1f);
+        #go-btn {
+            background: linear-gradient(to right, #4776E6, #8E54E9);
             color: white;
             border: none;
-            padding: 14px 30px;
-            font-size: 1.1rem;
-            border-radius: 50px;
-            cursor: pointer;
-            width: 100%;
+            padding: 0 30px;
+            font-size: 16px;
             font-weight: 600;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            border-radius: 0 8px 8px 0;
+            transition: all 0.3s;
         }
-        
-        .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 7px 20px rgba(0, 0, 0, 0.3);
-            background: linear-gradient(to right, #24378a, #c72d2d);
+        #go-btn:hover {
+            background: linear-gradient(to right, #3a68d6, #7d4bd9);
+            transform: translateY(-2px);
         }
-        
-        .btn:active {
-            transform: translateY(1px);
+        .content-section {
+            padding: 20px;
+            min-height: 500px;
         }
-        
-        .result {
-            margin-top: 30px;
-            padding: 15px;
-            background-color: #f8f9fa;
+        .iframe-container {
+            border: 1px solid #eaeaea;
             border-radius: 8px;
-            font-size: 0.9rem;
-            display: none;
+            overflow: hidden;
+            background: #f9f9f9;
+            height: 500px;
+            margin-top: 20px;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.05);
         }
-        
-        .error {
-            color: #dc3545;
-            margin-top: 10px;
-            font-weight: 500;
-            display: none;
+        #content-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
         }
-        
-        .compatibility {
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 1px solid #eaeaea;
+        .instructions {
+            background: #f0f7ff;
+            border-left: 4px solid #4776E6;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 0 8px 8px 0;
         }
-        
-        .compatibility h3 {
-            margin-bottom: 15px;
-            color: #1a2a6c;
+        .instructions h3 {
+            color: #4776E6;
+            margin-bottom: 10px;
         }
-        
-        .browser-icons {
-            display: flex;
-            justify-content: space-around;
+        .instructions ul {
+            padding-left: 20px;
+        }
+        .instructions li {
+            margin-bottom: 8px;
+        }
+        .example {
             margin-top: 15px;
+            font-style: italic;
+            color: #666;
         }
-        
-        .browser-icon {
-            text-align: center;
-            font-size: 3rem;
-        }
-        
-        .browser-icon span {
-            font-size: 0.9rem;
-            display: block;
-            margin-top: 5px;
-        }
-        
         footer {
-            margin-top: 30px;
-            color: #6c757d;
+            text-align: center;
+            padding: 20px;
+            color: #777;
             font-size: 0.9rem;
+            border-top: 1px solid #eee;
         }
-        
+        .error {
+            color: #e74c3c;
+            text-align: center;
+            padding: 15px;
+            margin-top: 15px;
+            background: #ffebee;
+            border-radius: 8px;
+            display: none;
+        }
         @media (max-width: 768px) {
-            .container {
-                padding: 30px 20px;
-            }
-            
-            h1 {
-                font-size: 2rem;
-            }
-            
             .input-group {
                 flex-direction: column;
             }
-            
-            .prefix {
-                border-radius: 5px 5px 0 0;
-                border-right: 1px solid #ced4da;
-                border-bottom: none;
+            .prefix, #filename, #go-btn {
+                width: 100%;
+                border-radius: 8px;
+                margin-bottom: 10px;
             }
-            
-            input[type="text"] {
-                border-radius: 0 0 5px 5px;
+            .prefix {
+                border-right: 1px solid #ddd;
+                text-align: center;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>文件URL跳转器</h1>
-        <p class="subtitle">输入文件名，跳转到指定文件URL地址</p>
+        <header>
+            <h1>URL页面内跳转器</h1>
+            <p class="subtitle">输入文件名，在当前页面内直接查看目标内容</p>
+        </header>
         
-        <div class="form-group">
-            <label for="filename">文件名：</label>
+        <section class="input-section">
             <div class="input-group">
                 <div class="prefix">http://aliyun.com.hyj120309.top/</div>
-                <input type="text" id="filename" placeholder="例如：bg.jpg" autocomplete="off">
+                <input type="text" id="filename" placeholder="输入文件名（如：bg.jpg）" autofocus>
+                <button id="go-btn">查看</button>
             </div>
-            <p class="example">示例：bg.jpg, images/photo.png, docs/report.pdf</p>
-            <div id="error" class="error">请输入有效的文件名</div>
-        </div>
+            <div id="error-message" class="error">请输入有效的文件名</div>
+        </section>
         
-        <button id="redirectBtn" class="btn">立即跳转</button>
-        
-        <div id="result" class="result">
-            即将跳转到: <span id="generatedUrl"></span>
-        </div>
-        
-        <div class="compatibility">
-            <h3>兼容性说明</h3>
-            <p>此工具使用纯HTML和JavaScript实现，兼容以下浏览器：</p>
-            <div class="browser-icons">
-                <div class="browser-icon">🌐<span>IE9+</span></div>
-                <div class="browser-icon">🔥<span>Firefox</span></div>
-                <div class="browser-icon">🧭<span>Chrome</span></div>
-                <div class="browser-icon">⛵<span>Safari</span></div>
-                <div class="browser-icon">🦊<span>Opera</span></div>
+        <section class="content-section">
+            <div class="instructions">
+                <h3>使用说明</h3>
+                <ul>
+                    <li>在输入框中输入文件名（如：bg.jpg）</li>
+                    <li>点击"查看"按钮，内容将显示在下方区域</li>
+                    <li>支持图片、文档、网页等多种文件类型</li>
+                    <li>内容在当前页面内显示，不会打开新标签页</li>
+                </ul>
+                <div class="example">示例：输入 "background.png" 或 "documents/report.pdf"</div>
             </div>
-        </div>
+            
+            <div class="iframe-container">
+                <iframe id="content-frame" src="about:blank"></iframe>
+            </div>
+        </section>
         
         <footer>
-            <p>© 2023 URL跳转器 | 兼容性优先设计</p>
+            <p>URL页面内跳转器 &copy; 2023</p>
         </footer>
     </div>
 
     <script>
-        // 兼容性强的JavaScript实现（ES5）
         document.addEventListener('DOMContentLoaded', function() {
-            var filenameInput = document.getElementById('filename');
-            var redirectBtn = document.getElementById('redirectBtn');
-            var errorElement = document.getElementById('error');
-            var resultElement = document.getElementById('result');
-            var generatedUrlElement = document.getElementById('generatedUrl');
+            const filenameInput = document.getElementById('filename');
+            const goButton = document.getElementById('go-btn');
+            const contentFrame = document.getElementById('content-frame');
+            const errorMessage = document.getElementById('error-message');
             
-            // 跳转按钮点击事件
-            redirectBtn.addEventListener('click', function() {
-                // 获取输入的文件名并去除首尾空格
-                var filename = filenameInput.value.trim();
+            // 处理URL跳转
+            function loadContent() {
+                const filename = filenameInput.value.trim();
                 
-                // 验证输入是否为空
                 if (!filename) {
-                    showError('请输入文件名');
+                    errorMessage.textContent = "请输入文件名";
+                    errorMessage.style.display = 'block';
                     return;
                 }
                 
-                // 构建完整的URL
-                var baseUrl = 'http://aliyun.com.hyj120309.top/';
-                var fullUrl = baseUrl + filename;
+                // 构建完整URL
+                const baseUrl = 'http://aliyun.com.hyj120309.top/';
+                const fullUrl = baseUrl + encodeURIComponent(filename);
                 
-                // 显示结果
-                generatedUrlElement.textContent = fullUrl;
-                resultElement.style.display = 'block';
-                errorElement.style.display = 'none';
-                
-                // 延迟跳转以便用户看到URL
-                setTimeout(function() {
-                    window.location.href = fullUrl;
-                }, 800);
-            });
+                // 设置iframe源
+                try {
+                    contentFrame.src = fullUrl;
+                    errorMessage.style.display = 'none';
+                } catch (e) {
+                    errorMessage.textContent = "加载内容时出错：" + e.message;
+                    errorMessage.style.display = 'block';
+                }
+            }
             
-            // 按Enter键也可以触发跳转
+            // 按钮点击事件
+            goButton.addEventListener('click', loadContent);
+            
+            // 回车键事件
             filenameInput.addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
-                    redirectBtn.click();
+                    loadContent();
                 }
             });
             
-            // 输入时隐藏错误信息
-            filenameInput.addEventListener('input', function() {
-                if (filenameInput.value.trim()) {
-                    errorElement.style.display = 'none';
-                }
-            });
-            
-            // 显示错误信息函数
-            function showError(message) {
-                errorElement.textContent = message;
-                errorElement.style.display = 'block';
-                resultElement.style.display = 'none';
-                
-                // 添加错误动画效果
-                filenameInput.style.borderColor = '#dc3545';
-                setTimeout(function() {
-                    filenameInput.style.borderColor = '#ced4da';
-                }, 1000);
-            }
+            // 初始加载示例
+            filenameInput.value = 'bg.jpg';
+            loadContent();
         });
     </script>
 </body>
