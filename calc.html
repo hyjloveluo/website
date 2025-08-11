@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>增强版科学计算器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .calculator {
+            width: 360px;
+            background: #1e1e2e;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+            overflow: hidden;
+            border: 2px solid #3a3a5a;
+        }
+        .display-container {
+            background: #0a0a14;
+            padding: 15px 20px;
+            border-bottom: 1px solid #33334d;
+            position: relative;
+        }
+        .previous-operand {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.2rem;
+            min-height: 24px;
+            text-align: right;
+            word-break: break-all;
+            padding-right: 5px;
+        }
+        .current-operand {
+            color: #fff;
+            font-size: 2.8rem;
+            font-weight: 300;
+            text-align: right;
+            min-height: 70px;
+            word-break: break-all;
+            padding-right: 5px;
+        }
+        .root-indicator {
+            position: absolute;
+            bottom: 10px;
+            left: 20px;
+            color: #ffcc66;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            padding: 15px;
+            background: #161624;
+        }
+        button {
+            border: none;
+            outline: none;
+            padding: 16px 8px;
+            border-radius: 12px;
+            font-size: 1.3rem;
+            background: #2d2d44;
+            color: #e6e6ff;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.2);
+        }
+        button:active {
+            transform: translateY(4px);
+            box-shadow: none;
+            background: #3d3d5e;
+        }
+        .operator {
+            background: #4c4c7a;
+            color: #fff;
+        }
+        .equals {
+            background: #ff9500;
+            color: #fff;
+            font-weight: bold;
+        }
+        .function {
+            background: #3a3a5a;
+            color: #ffcc66;
+            font-size: 1.1rem;
+        }
+        .root {
+            background: #5a3a7a;
+            color: #ffccff;
+        }
+        .double {
+            grid-column: span 2;
+        }
+        .title {
+            text-align: center;
+            color: #ffcc66;
+            padding: 12px;
+            font-size: 1.4rem;
+            background: rgba(0,0,0,0.2);
+            border-bottom: 1px solid #33334d;
+        }
+        .instructions {
+            color: #a0a0c0;
+            text-align: center;
+            padding: 10px;
+            font-size: 0.9rem;
+            background: rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <div class="title">科学计算器</div>
+        <div class="instructions">支持自定义次方根（3√, 4√, n√）</div>
+        <div class="display-container">
+            <div class="previous-operand" id="previous-operand"></div>
+            <div class="current-operand" id="current-operand">0</div>
+            <div class="root-indicator" id="root-indicator"></div>
+        </div>
+        <div class="buttons">
+            <button class="function" onclick="clearDisplay()">C</button>
+            <button class="function" onclick="backspace()">⌫</button>
+            <button class="function" onclick="calculateSqrt()">√</button>
+            <button class="function" onclick="appendOperation('^')">x^y</button>
+            <button class="function" onclick="appendOperation('(')">(</button>
+            
+            <button class="root" onclick="setRoot(3)">3√</button>
+            <button class="root" onclick="setRoot(4)">4√</button>
+            <button class="root" onclick="setRoot(5)">5√</button>
+            <button class="root" onclick="setRoot(6)">6√</button>
+            <button class="function" onclick="appendOperation(')')">)</button>
+            
+            <button class="function" onclick="appendPi()">π</button>
+            <button class="operator" onclick="appendOperation('/')">÷</button>
+            <button onclick="appendNumber('7')">7</button>
+            <button onclick="appendNumber('8')">8</button>
+            <button onclick="appendNumber('9')">9</button>
+            
+            <button class="operator" onclick="appendOperation('*')">×</button>
+            <button onclick="appendNumber('4')">4</button>
+            <button onclick="appendNumber('5')">5</button>
+            <button onclick="appendNumber('6')">6</button>
+            
+            <button class="operator" onclick="appendOperation('-')">−</button>
+            <button onclick="appendNumber('1')">1</button>
+            <button onclick="appendNumber('2')">2</button>
+            <button onclick="appendNumber('3')">3</button>
+            
+            <button class="operator" onclick="appendOperation('+')">+</button>
+            <button class="double" onclick="appendNumber('0')">0</button>
+            <button onclick="appendDecimal()">.</button>
+            <button class="equals" onclick="calculate()">=</button>
+        </div>
+    </div>
+
+    <script>
+        const currentOperandElement = document.getElementById('current-operand');
+        const previousOperandElement = document.getElementById('previous-operand');
+        const rootIndicatorElement = document.getElementById('root-indicator');
+        
+        let currentOperand = '0';
+        let previousOperand = '';
+        let rootExponent = null;
+        
+        function updateDisplay() {
+            currentOperandElement.textContent = currentOperand;
+            previousOperandElement.textContent = previousOperand;
+            
+            // 更新次方根指示器
+            if (rootExponent !== null) {
+                rootIndicatorElement.textContent = `${rootExponent}次方根`;
+            } else {
+                rootIndicatorElement.textContent = '';
+            }
+        }
+        
+        function appendNumber(number) {
+            if (currentOperand === '0' || currentOperand === '错误') {
+                currentOperand = number;
+            } else {
+                currentOperand += number;
+            }
+            updateDisplay();
+        }
+        
+        function appendDecimal() {
+            if (currentOperand === '错误') {
+                currentOperand = '0.';
+            } else if (!currentOperand.includes('.')) {
+                currentOperand += '.';
+            }
+            updateDisplay();
+        }
+        
+        function clearDisplay() {
+            currentOperand = '0';
+            previousOperand = '';
+            rootExponent = null;
+            updateDisplay();
+        }
+        
+        function backspace() {
+            if (currentOperand === '错误') {
+                currentOperand = '0';
+            } else if (currentOperand.length === 1) {
+                currentOperand = '0';
+            } else {
+                currentOperand = currentOperand.slice(0, -1);
+            }
+            updateDisplay();
+        }
+        
+        function appendOperation(op) {
+            if (currentOperand === '错误') {
+                currentOperand = '0';
+            }
+            
+            // 重置次方根状态
+            rootExponent = null;
+            
+            if (op === '^') {
+                previousOperand = currentOperand + '^';
+                currentOperand = '0';
+            } else if (op === 'Math.PI') {
+                currentOperand = Math.PI.toString();
+            } else {
+                previousOperand += currentOperand + op;
+                currentOperand = '0';
+            }
+            
+            updateDisplay();
+        }
+        
+        function appendPi() {
+            if (currentOperand === '0' || currentOperand === '错误') {
+                currentOperand = Math.PI.toString();
+            } else {
+                currentOperand += Math.PI.toString();
+            }
+            updateDisplay();
+        }
+        
+        function calculateSqrt() {
+            if (currentOperand === '错误') {
+                currentOperand = '0';
+            }
+            
+            try {
+                const num = parseFloat(currentOperand);
+                if (num < 0) {
+                    currentOperand = '错误';
+                } else {
+                    const result = Math.sqrt(num);
+                    previousOperand = `√(${num})`;
+                    currentOperand = result.toString();
+                }
+            } catch (e) {
+                currentOperand = '错误';
+            }
+            updateDisplay();
+        }
+        
+        // 设置自定义次方根
+        function setRoot(exponent) {
+            if (currentOperand === '错误') {
+                currentOperand = '0';
+            }
+            
+            rootExponent = exponent;
+            previousOperand = `${exponent}√(${currentOperand})`;
+            calculateRoot();
+        }
+        
+        // 计算自定义次方根
+        function calculateRoot() {
+            if (rootExponent === null || currentOperand === '错误') return;
+            
+            try {
+                const num = parseFloat(currentOperand);
+                const exponent = rootExponent;
+                
+                if (num < 0 && exponent % 2 === 0) {
+                    currentOperand = '错误'; // 负数的偶次方根是复数
+                } else {
+                    // 计算 num 的 exponent 次方根
+                    const result = Math.pow(num, 1/exponent);
+                    
+                    if (isNaN(result) || !isFinite(result)) {
+                        currentOperand = '错误';
+                    } else {
+                        currentOperand = result.toString();
+                    }
+                }
+            } catch (e) {
+                currentOperand = '错误';
+            }
+            
+            updateDisplay();
+        }
+        
+        function calculate() {
+            // 如果有次方根待计算，先计算
+            if (rootExponent !== null) {
+                calculateRoot();
+                return;
+            }
+            
+            let expression = previousOperand + currentOperand;
+            
+            try {
+                // 替换运算符
+                expression = expression.replace(/\^/g, '**');
+                expression = expression.replace(/÷/g, '/');
+                expression = expression.replace(/×/g, '*');
+                expression = expression.replace(/−/g, '-');
+                
+                // 安全评估表达式
+                const result = safeEval(expression);
+                
+                if (isNaN(result) || !isFinite(result)) {
+                    currentOperand = '错误';
+                } else {
+                    // 最多保留10位小数
+                    currentOperand = parseFloat(result.toFixed(10)).toString();
+                    previousOperand = expression + '=';
+                }
+            } catch (e) {
+                currentOperand = '错误';
+            }
+            
+            updateDisplay();
+        }
+        
+        // 安全评估函数
+        function safeEval(exp) {
+            // 使用Function构造函数安全评估
+            return Function(`'use strict'; return (${exp})`)();
+        }
+        
+        // 初始显示
+        updateDisplay();
+    </script>
+</body>
+</html>
