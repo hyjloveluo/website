@@ -3,103 +3,165 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>URL页面内跳转器</title>
+    <title>可复制内容URL跳转器</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
         }
         body {
-            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
-            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
             color: #333;
             min-height: 100vh;
             padding: 20px;
             line-height: 1.6;
         }
         .container {
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 40px auto;
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.97);
             border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
             overflow: hidden;
         }
         header {
-            background: linear-gradient(to right, #4776E6, #8E54E9);
+            background: linear-gradient(to right, #2c3e50, #4ca1af);
             color: white;
             padding: 25px 30px;
             text-align: center;
+            position: relative;
         }
         h1 {
-            font-size: 2.2rem;
+            font-size: 2.5rem;
             margin-bottom: 8px;
             letter-spacing: 1px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
         .subtitle {
-            opacity: 0.85;
+            opacity: 0.9;
             font-weight: 300;
-            max-width: 600px;
+            max-width: 700px;
             margin: 0 auto;
+            font-size: 1.1rem;
         }
         .input-section {
             padding: 30px;
             border-bottom: 1px solid #eee;
+            background: #f8f9fa;
         }
         .input-group {
             display: flex;
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
         }
         .prefix {
-            background: #f1f3f9;
+            background: #e9ecef;
             padding: 15px 20px;
-            border: 1px solid #ddd;
+            border: 1px solid #ced4da;
             border-right: none;
             border-radius: 8px 0 0 8px;
             font-weight: 500;
-            color: #555;
+            color: #495057;
+            min-width: 280px;
+            display: flex;
+            align-items: center;
         }
         #filename {
             flex: 1;
             padding: 15px;
-            border: 1px solid #ddd;
+            border: 1px solid #ced4da;
             font-size: 16px;
             outline: none;
             transition: all 0.3s;
         }
         #filename:focus {
-            border-color: #4776E6;
-            box-shadow: 0 0 0 3px rgba(71, 118, 230, 0.2);
+            border-color: #4ca1af;
+            box-shadow: 0 0 0 3px rgba(76, 161, 175, 0.3);
         }
         #go-btn {
-            background: linear-gradient(to right, #4776E6, #8E54E9);
+            background: linear-gradient(to right, #2c3e50, #4ca1af);
             color: white;
             border: none;
-            padding: 0 30px;
-            font-size: 16px;
+            padding: 0 35px;
+            font-size: 17px;
             font-weight: 600;
             cursor: pointer;
             border-radius: 0 8px 8px 0;
             transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         #go-btn:hover {
-            background: linear-gradient(to right, #3a68d6, #7d4bd9);
+            background: linear-gradient(to right, #1a2a40, #3a8a97);
             transform: translateY(-2px);
         }
         .content-section {
-            padding: 20px;
-            min-height: 500px;
+            padding: 25px;
+            min-height: 600px;
+            display: flex;
+            flex-direction: column;
+        }
+        .iframe-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 12px 15px;
+            background: #e3f2fd;
+            border-radius: 8px;
+            border-left: 4px solid #2196f3;
+        }
+        .iframe-header h3 {
+            color: #0d47a1;
+            font-size: 1.3rem;
+        }
+        .copy-hint {
+            background: #4caf50;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         .iframe-container {
-            border: 1px solid #eaeaea;
+            border: 1px solid #e0e0e0;
             border-radius: 8px;
             overflow: hidden;
             background: #f9f9f9;
-            height: 500px;
-            margin-top: 20px;
-            box-shadow: inset 0 2px 8px rgba(0,0,0,0.05);
+            height: 600px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: column;
+        }
+        .iframe-toolbar {
+            background: #f5f5f5;
+            padding: 10px 15px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            gap: 10px;
+        }
+        .tool-btn {
+            background: #e0e0e0;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s;
+        }
+        .tool-btn:hover {
+            background: #d0d0d0;
+        }
+        .iframe-wrapper {
+            flex: 1;
+            overflow: hidden;
         }
         #content-frame {
             width: 100%;
@@ -107,36 +169,42 @@
             border: none;
         }
         .instructions {
-            background: #f0f7ff;
-            border-left: 4px solid #4776E6;
+            background: #fff8e1;
+            border-left: 4px solid #ffc107;
             padding: 20px;
             margin: 25px 0;
             border-radius: 0 8px 8px 0;
         }
         .instructions h3 {
-            color: #4776E6;
+            color: #ff8f00;
             margin-bottom: 10px;
+            font-size: 1.3rem;
         }
         .instructions ul {
-            padding-left: 20px;
+            padding-left: 25px;
         }
         .instructions li {
-            margin-bottom: 8px;
+            margin-bottom: 10px;
+            font-size: 1.05rem;
         }
         .example {
             margin-top: 15px;
             font-style: italic;
             color: #666;
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 6px;
         }
         footer {
             text-align: center;
             padding: 20px;
-            color: #777;
-            font-size: 0.9rem;
+            color: #6c757d;
+            font-size: 0.95rem;
             border-top: 1px solid #eee;
+            background: #f8f9fa;
         }
         .error {
-            color: #e74c3c;
+            color: #d32f2f;
             text-align: center;
             padding: 15px;
             margin-top: 15px;
@@ -144,7 +212,16 @@
             border-radius: 8px;
             display: none;
         }
-        @media (max-width: 768px) {
+        .success {
+            color: #2e7d32;
+            text-align: center;
+            padding: 15px;
+            margin-top: 15px;
+            background: #e8f5e9;
+            border-radius: 8px;
+            display: none;
+        }
+        @media (max-width: 900px) {
             .input-group {
                 flex-direction: column;
             }
@@ -154,8 +231,34 @@
                 margin-bottom: 10px;
             }
             .prefix {
-                border-right: 1px solid #ddd;
+                border-right: 1px solid #ced4da;
                 text-align: center;
+                min-width: auto;
+            }
+            .iframe-header {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+            .iframe-container {
+                height: 500px;
+            }
+        }
+        @media (max-width: 600px) {
+            .container {
+                margin: 20px auto;
+            }
+            header {
+                padding: 20px 15px;
+            }
+            h1 {
+                font-size: 1.8rem;
+            }
+            .input-section {
+                padding: 20px 15px;
+            }
+            .iframe-container {
+                height: 400px;
             }
         }
     </style>
@@ -163,38 +266,76 @@
 <body>
     <div class="container">
         <header>
-            <h1>URL页面内跳转器</h1>
-            <p class="subtitle">输入文件名，在当前页面内直接查看目标内容</p>
+            <h1>可复制内容URL跳转器</h1>
+            <p class="subtitle">专为电子课本设计 - 在页面内浏览内容并自由复制文本</p>
         </header>
         
         <section class="input-section">
             <div class="input-group">
                 <div class="prefix">http://aliyun.com.hyj120309.top/</div>
-                <input type="text" id="filename" placeholder="输入文件名（如：bg.jpg）" autofocus>
-                <button id="go-btn">查看</button>
+                <input type="text" id="filename" placeholder="输入文件名（如：ebook.pdf, chapter.html）" autofocus>
+                <button id="go-btn">加载内容</button>
             </div>
             <div id="error-message" class="error">请输入有效的文件名</div>
+            <div id="success-message" class="success">内容加载成功！您可以直接在框架中选择和复制文本</div>
         </section>
         
         <section class="content-section">
-            <div class="instructions">
-                <h3>使用说明</h3>
-                <ul>
-                    <li>在输入框中输入文件名（如：bg.jpg）</li>
-                    <li>点击"查看"按钮，内容将显示在下方区域</li>
-                    <li>支持图片、文档、网页等多种文件类型</li>
-                    <li>内容在当前页面内显示，不会打开新标签页</li>
-                </ul>
-                <div class="example">示例：输入 "background.png" 或 "documents/report.pdf"</div>
+            <div class="iframe-header">
+                <h3>内容浏览区</h3>
+                <div class="copy-hint">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+                        <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+                    </svg>
+                    内容区域支持文本选择和复制
+                </div>
             </div>
             
             <div class="iframe-container">
-                <iframe id="content-frame" src="about:blank"></iframe>
+                <div class="iframe-toolbar">
+                    <button class="tool-btn" id="zoom-in">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M8 0a.5.5 0 0 1 .5.5v7h7a.5.5 0 0 1 0 1h-7v7a.5.5 0 0 1-1 0v-7h-7a.5.5 0 0 1 0-1h7v-7A.5.5 0 0 1 8 0z"/>
+                        </svg>
+                        放大
+                    </button>
+                    <button class="tool-btn" id="zoom-out">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M0 8a.5.5 0 0 1 .5-.5h15a.5.5 0 0 1 0 1H.5A.5.5 0 0 1 0 8z"/>
+                        </svg>
+                        缩小
+                    </button>
+                    <button class="tool-btn" id="reload-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
+                            <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
+                        </svg>
+                        刷新
+                    </button>
+                </div>
+                <div class="iframe-wrapper">
+                    <iframe id="content-frame" src="about:blank"></iframe>
+                </div>
+            </div>
+        </section>
+        
+        <section class="instructions">
+            <h3>使用说明</h3>
+            <ul>
+                <li><strong>输入文件名</strong> - 在输入框中输入资源文件名（如：ebook.pdf, chapter1.html）</li>
+                <li><strong>加载内容</strong> - 点击"加载内容"按钮或按Enter键</li>
+                <li><strong>复制文本</strong> - 在内容区域中直接选择文本，右键复制或使用Ctrl+C</li>
+                <li><strong>放大/缩小</strong> - 使用工具栏按钮调整内容显示比例</li>
+                <li><strong>电子课本支持</strong> - 特别优化支持PDF文档和HTML电子课本的文本复制</li>
+            </ul>
+            <div class="example">
+                示例：输入 "textbook.pdf" 或 "lessons/chapter3.html"
             </div>
         </section>
         
         <footer>
-            <p>URL页面内跳转器 &copy; 2023</p>
+            <p>可复制内容URL跳转器 &copy; 2023 | 专为电子课本设计</p>
         </footer>
     </div>
 
@@ -204,6 +345,15 @@
             const goButton = document.getElementById('go-btn');
             const contentFrame = document.getElementById('content-frame');
             const errorMessage = document.getElementById('error-message');
+            const successMessage = document.getElementById('success-message');
+            const zoomInBtn = document.getElementById('zoom-in');
+            const zoomOutBtn = document.getElementById('zoom-out');
+            const reloadBtn = document.getElementById('reload-btn');
+            
+            let currentScale = 1;
+            const maxScale = 2;
+            const minScale = 0.5;
+            const scaleStep = 0.1;
             
             // 处理URL跳转
             function loadContent() {
@@ -212,6 +362,7 @@
                 if (!filename) {
                     errorMessage.textContent = "请输入文件名";
                     errorMessage.style.display = 'block';
+                    successMessage.style.display = 'none';
                     return;
                 }
                 
@@ -223,11 +374,48 @@
                 try {
                     contentFrame.src = fullUrl;
                     errorMessage.style.display = 'none';
+                    successMessage.style.display = 'block';
+                    
+                    // 重置缩放
+                    currentScale = 1;
+                    applyScale();
                 } catch (e) {
                     errorMessage.textContent = "加载内容时出错：" + e.message;
                     errorMessage.style.display = 'block';
+                    successMessage.style.display = 'none';
                 }
             }
+            
+            // 应用缩放
+            function applyScale() {
+                contentFrame.style.transform = `scale(${currentScale})`;
+                contentFrame.style.transformOrigin = '0 0';
+                contentFrame.style.width = `${100 / currentScale}%`;
+                contentFrame.style.height = `${100 / currentScale}%`;
+            }
+            
+            // 放大内容
+            zoomInBtn.addEventListener('click', function() {
+                if (currentScale < maxScale) {
+                    currentScale += scaleStep;
+                    applyScale();
+                }
+            });
+            
+            // 缩小内容
+            zoomOutBtn.addEventListener('click', function() {
+                if (currentScale > minScale) {
+                    currentScale -= scaleStep;
+                    applyScale();
+                }
+            });
+            
+            // 刷新内容
+            reloadBtn.addEventListener('click', function() {
+                if (contentFrame.src && contentFrame.src !== 'about:blank') {
+                    contentFrame.src = contentFrame.src;
+                }
+            });
             
             // 按钮点击事件
             goButton.addEventListener('click', loadContent);
@@ -240,8 +428,41 @@
             });
             
             // 初始加载示例
-            filenameInput.value = 'bg.jpg';
-            loadContent();
+            filenameInput.value = 'ebook-sample.pdf';
+            setTimeout(loadContent, 500);
+            
+            // 添加复制提示
+            contentFrame.addEventListener('load', function() {
+                try {
+                    // 尝试添加复制支持提示（跨域限制下可能无法执行）
+                    if (contentFrame.contentDocument) {
+                        const style = contentFrame.contentDocument.createElement('style');
+                        style.textContent = `
+                            body::after {
+                                content: "提示：您可以直接选择并复制此内容";
+                                position: fixed;
+                                bottom: 20px;
+                                right: 20px;
+                                background: rgba(0,0,0,0.7);
+                                color: white;
+                                padding: 10px 15px;
+                                border-radius: 4px;
+                                font-size: 14px;
+                                z-index: 9999;
+                                pointer-events: none;
+                                animation: fadeInOut 5s ease-in-out;
+                            }
+                            @keyframes fadeInOut {
+                                0%,100% { opacity: 0; }
+                                10%,90% { opacity: 1; }
+                            }
+                        `;
+                        contentFrame.contentDocument.head.appendChild(style);
+                    }
+                } catch (e) {
+                    // 跨域限制下忽略错误
+                }
+            });
         });
     </script>
 </body>
