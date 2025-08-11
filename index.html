@@ -12,7 +12,7 @@
             font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
         }
         body {
-            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f);
             color: #333;
             min-height: 100vh;
             padding: 20px;
@@ -117,16 +117,6 @@
         .iframe-header h3 {
             color: #0d47a1;
             font-size: 1.3rem;
-        }
-        .copy-hint {
-            background: #4caf50;
-            color: white;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
         .iframe-container {
             border: 1px solid #e0e0e0;
@@ -284,10 +274,6 @@
             <div class="iframe-header">
                 <h3>内容浏览区</h3>
                 <div class="copy-hint">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                        <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
-                        <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
-                    </svg>
                     内容区域支持文本选择和复制
                 </div>
             </div>
@@ -430,39 +416,6 @@
             // 初始加载示例
             filenameInput.value = 'ebook-sample.pdf';
             setTimeout(loadContent, 500);
-            
-            // 添加复制提示
-            contentFrame.addEventListener('load', function() {
-                try {
-                    // 尝试添加复制支持提示（跨域限制下可能无法执行）
-                    if (contentFrame.contentDocument) {
-                        const style = contentFrame.contentDocument.createElement('style');
-                        style.textContent = `
-                            body::after {
-                                content: "提示：您可以直接选择并复制此内容";
-                                position: fixed;
-                                bottom: 20px;
-                                right: 20px;
-                                background: rgba(0,0,0,0.7);
-                                color: white;
-                                padding: 10px 15px;
-                                border-radius: 4px;
-                                font-size: 14px;
-                                z-index: 9999;
-                                pointer-events: none;
-                                animation: fadeInOut 5s ease-in-out;
-                            }
-                            @keyframes fadeInOut {
-                                0%,100% { opacity: 0; }
-                                10%,90% { opacity: 1; }
-                            }
-                        `;
-                        contentFrame.contentDocument.head.appendChild(style);
-                    }
-                } catch (e) {
-                    // 跨域限制下忽略错误
-                }
-            });
         });
     </script>
 </body>
