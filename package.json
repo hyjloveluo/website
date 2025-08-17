@@ -1,0 +1,4 @@
+"scripts": {
+  "prebuild": "git submodule update --init --recursive",
+  "build": "next build"
+}
