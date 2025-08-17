@@ -1,4 +1,5 @@
+{
 "scripts": {
-  "prebuild": "git submodule update --init --recursive",
-  "build": "next build"
+  "vercel-postinstall": "git submodule update --init --recursive"
+}
 }
