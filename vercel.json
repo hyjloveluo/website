@@ -8,4 +8,14 @@
       ]
     }
   ]
+  "build": {
+    "command": "
+      cd website && 
+      git submodule update --init --recursive && 
+      cd files && 
+      git lfs install &&
+      git lfs pull && 
+      npm run vercel-build
+    "
+  }
 }

@@ -1,5 +1,0 @@
-{
-"scripts": {
-  "vercel-postinstall": "cd website && git submodule update --init --recursive && git lfs pull"
-}
-}
