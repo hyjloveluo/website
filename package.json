@@ -1,5 +1,5 @@
 {
 "scripts": {
-  "vercel-postinstall": "ls -a && git submodule update --init --recursive"
+  "vercel-postinstall": "cd website && git submodule update --init --recursive"
 }
 }
