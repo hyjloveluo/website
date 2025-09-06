@@ -36,7 +36,7 @@ jobs:
           remove-haskell: 'true'
           remove-codeql: 'true'
       - name: Checkout
-        run: git clone https://huggingface.co/hyj120309/files files && git lfs install && git lfs pull
+        run: git clone https://huggingface.co/hyj120309/files files && cd files && git lfs install && git lfs pull
       - name: Build with Jekyll
         uses: actions/jekyll-build-pages@v1
         with:
