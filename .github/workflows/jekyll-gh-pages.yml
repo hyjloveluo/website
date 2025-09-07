@@ -44,8 +44,6 @@ jobs:
           destination: ./_site
       - name: Deploy to Vercel
         uses: amondnet/vercel-action@master
-        env:
-          VERSION: ${{ env.GITHUB_SHA }}
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.ORG_ID}}
